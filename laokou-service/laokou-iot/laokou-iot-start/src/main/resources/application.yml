@@ -1,0 +1,20 @@
+server:
+  port: ${SERVER_PORT:10005}
+  shutdown: graceful
+  ssl:
+    # 开启证书
+    enabled: @SSL-ENABLED@
+    # 证书位置
+    key-store: classpath:scg-keystore.p12
+    # 证书别名
+    key-alias: ${spring.application.name}
+    # 秘钥类型
+    key-store-type: PKCS12
+    # 证书密码
+    key-store-password: laokou
+
+spring:
+  application:
+    name: ${SERVICE_ID:laokou-iot}
+  profiles:
+    active: @PROFILE-ACTIVE@

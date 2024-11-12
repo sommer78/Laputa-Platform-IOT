@@ -1,0 +1,38 @@
+{
+  "id": "${serviceId}",
+  "uri": "lb://${serviceId}",
+  "predicates": [
+    {
+      "name": "Path",
+      "args": {
+        "pattern": "/${abbr}/**"
+      }
+    },
+    {
+      "name": "Weight",
+      "args": {
+        "_genkey_0": "${abbr}",
+        "_genkey_1": "100"
+      }
+    }
+  ],
+  "filters": [
+    {
+      "name": "StripPrefix",
+      "args": {
+        "parts": "1"
+      }
+    },
+    {
+      "name": "RewritePath",
+      "args": {
+        "_genkey_0": "/${abbr}/(?<path>.*)",
+        "_genkey_1": "/$\\{path}"
+      }
+    }
+  ],
+  "metadata": {
+    "version": "2.0"
+  },
+  "order": 1
+}

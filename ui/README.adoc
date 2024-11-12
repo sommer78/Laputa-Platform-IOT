@@ -1,0 +1,14 @@
+=== 下载依赖
+
+[source,shell]
+----
+npm cache clean --force
+npm install
+----
+
+=== 运行项目
+
+[source,shell]
+----
+npm run dev
+----

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>WebSocket测试</title>
+</head>
+<body>
+<label for="clientId">
+    <input id="clientId" type="text">
+</label>
+<button id="btn1" onclick="connect()">连接</button>
+<br/>
+<label for="receiver">
+    <input id="receiver" type="text">
+</label>
+<label for="payload">
+    <input id="payload" type="text">
+</label>
+<button id="btn2" onclick="send()">发送</button>
+</body>
+<script>
+    function connect() {
+
+        let clientId = getClientId();
+
+        if (clientId === "" || clientId === undefined || clientId === null) {
+            alert("请输入ClientId")
+            return
+        }
+
+        const socket = new WebSocket("ws://127.0.0.1:1112/ws")
+
+        socket.onopen = function() {
+            alert("连接成功")
+            console.log("连接成功")
+            socket.send(clientId)
+        }
+
+        socket.onmessage = function(event) {
+			if (event.data === 'ping') {
+				console.log('接收心跳Ping')
+				console.log('发送心跳Pong')
+				socket.send('pong')
+			} else {
+				const result = JSON.parse(event.data)
+				alert("接收消息：" + result.data)
+				console.log("接收消息", event.data)
+			}
+        }
+
+        socket.onerror = function(event) {
+            alert("连接失败")
+            console.log("连接失败", event)
+        }
+
+        socket.onclose = function() {
+            alert("连接关闭")
+            console.log("连接关闭")
+        }
+
+    }
+
+    function send() {
+        const data = {
+            receiver: [getReceiver()],
+            payload: getPayload()
+        }
+        const xhr = new XMLHttpRequest()
+        xhr.open("POST", "http://127.0.0.1:9032/send", true)
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+				const r = JSON.parse(xhr.responseText)
+				alert("消息提醒：" + r.msg)
+            } else if (xhr.readyState === 4) {
+                console.error("发送失败", xhr.status, xhr.statusText)
+            }
+        }
+        xhr.send(JSON.stringify(data))
+    }
+
+    function getClientId() {
+        return document.getElementById("clientId").value
+    }
+
+    function getReceiver() {
+        return document.getElementById("receiver").value
+    }
+
+    function getPayload() {
+        return document.getElementById("payload").value
+    }
+
+</script>
+</html>
